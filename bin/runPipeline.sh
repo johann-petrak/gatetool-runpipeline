@@ -33,14 +33,17 @@ SCRIPTDIR=`dirname "$PRG"`
 SCRIPTDIR=`cd "$SCRIPTDIR"; pwd -P`
 ROOTDIR=`cd "$SCRIPTDIR/.."; pwd -P`
 
+## for now use environment variable RUNPIPELINE_LOG_PREFIX 
+## to store the log and benchmark files with some other prefix than "run-"
+prefix="${RUNPIPELINE_LOG_PREFIX:-run}"
 timestamp=`date +%Y%m%d%H%M%S`
 if [[ $havelogs == 1 ]]
 then
-  benchfile=./logs/run-${timestamp}-benchmark.txt
-  echo log file is ./logs/run-${timestamp}-log.txt
+  benchfile=./logs/${prefix}-${timestamp}-benchmark.txt
+  echo log file is ./logs/${prefix}-${timestamp}-log.txt
   echo benchmark file is  $benchfile 
-  /usr/bin/time -o ./logs/run-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline -b $benchfile "$@" |& tee -a ./logs/run-${timestamp}-log.txt
-  echo log file is ./logs/run-${timestamp}-log.txt
+  /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline -b $benchfile "$@" |& tee -a ./logs/${prefix}-${timestamp}-log.txt
+  echo log file is ./logs/${prefix}-${timestamp}-log.txt
   echo benchmark file is  $benchfile 
 else 
   ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline "$@" 

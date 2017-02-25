@@ -33,6 +33,48 @@ SCRIPTDIR=`dirname "$PRG"`
 SCRIPTDIR=`cd "$SCRIPTDIR"; pwd -P`
 ROOTDIR=`cd "$SCRIPTDIR/.."; pwd -P`
 
+## Before passing all the parameters on to the command, check if there are any
+## which need to go before the program name.
+## For now we check for parameters -X* -D* and -cp
+vmparams=()
+prparams=()
+while test "$1" != "";
+do
+  full="$1"
+  argc=${full:0:2}
+  ## echo processing arg $full with prefix $argc
+  if [[ "$argc" == "-D" ]]
+  then
+    vmparams=( "${vmparams[@]}" "$full" )
+  else
+    if [[ "$argc" == "-X" ]]
+    then
+      vmparams=( "${vmparams[@]}" $full )
+    else
+      if [[ "$full" == "-cp" ]] 
+      then 
+        shift
+        cp="$1"
+        ## echo FOUND cp, set to $cp
+      else 
+        prparams=( "${prparams[@]}" "$full" )
+        ## echo adding $full to prparams is now "${prparams[@]}"
+      fi
+    fi
+  fi
+  shift
+done
+echo DEBUG got vmparms $vmparms AND prparms $prparms
+if [ "${JAVA_OPTS}" != "" ]
+then
+  vmparams=( "${JAVA_OPTS}" "${vmparams[@]}" )
+fi
+
+export JAVA_OPTS="${vmparams[@]}"
+
+echo DEBUG final JAVA_OPTS is $JAVA_OPTS
+echo DEBUG final vmparms is $vmparms
+
 ## for now use environment variable RUNPIPELINE_LOG_PREFIX 
 ## to store the log and benchmark files with some other prefix than "run-"
 prefix="${RUNPIPELINE_LOG_PREFIX:-run}"
@@ -42,10 +84,20 @@ then
   benchfile=./logs/${prefix}-${timestamp}-benchmark.txt
   echo log file is ./logs/${prefix}-${timestamp}-log.txt
   echo benchmark file is  $benchfile 
-  /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline -b $benchfile "$@" |& tee -a ./logs/${prefix}-${timestamp}-log.txt
+  if [[ "$cp" == "" ]] 
+  then
+    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline -b $benchfile "${prparams[@]}" |& tee -a ./logs/${prefix}-${timestamp}-log.txt
+  else
+    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${cp}:${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline -b $benchfile "${prparams[@]}" |& tee -a ./logs/${prefix}-${timestamp}-log.txt
+  fi
   echo log file is ./logs/${prefix}-${timestamp}-log.txt
   echo benchmark file is  $benchfile 
 else 
-  ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline "$@" 
+  if [[ "$cp" == "" ]] 
+  then
+    ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline "${prparams[@]}"
+  else
+    ${SCALA_HOME}/bin/scala -cp ${cp}:${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline "${prparams[@]}"
+  fi
 fi  
 

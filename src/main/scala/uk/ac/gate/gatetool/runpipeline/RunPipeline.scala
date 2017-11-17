@@ -14,7 +14,7 @@ import java.util._
 import java.io.File
 import org.rogach.scallop._
 import org.rogach.scallop.exceptions.Help
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.util.control._
 
 // NOTE: this program sets the following java properties before invoking the 
@@ -33,6 +33,8 @@ import scala.util.control._
 
 // TODO: option processing is flawed: for some reason, making the trailArgs required does not go well
 // with showing usage information and -h does not seem to work as wanted either.
+
+package uk.ac.gate.gatetool.runpipeline {
 
 object RunPipeline {
 
@@ -485,8 +487,8 @@ object RunPipeline {
       Gate.getCreoleRegister().getAllInstances("gate.ProcessingResource"));
     listOfListOfResources.add(
       Gate.getCreoleRegister().getAllInstances("gate.Controller"));
-    listOfListOfResources.foreach { resources => 
-      resources.foreach { aResource => 
+    listOfListOfResources.asScala.foreach { resources => 
+      resources.asScala.foreach { aResource => 
         try { 
           if(debug) { System.err.println("Trying to remove resource "+aResource.getName()); }
           Factory.deleteResource(aResource);
@@ -521,3 +523,4 @@ def stripExtension(filename: String): String = {
 
 } // object RunPipeline
 
+} // package

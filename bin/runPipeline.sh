@@ -86,18 +86,18 @@ then
   echo benchmark file is  $benchfile 
   if [[ "$cp" == "" ]] 
   then
-    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline -b $benchfile "${prparams[@]}" |& tee -a ./logs/${prefix}-${timestamp}-log.txt
+    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' uk.ac.gate.gatetool.runpipeline.RunPipeline -b $benchfile "${prparams[@]}" |& tee -a ./logs/${prefix}-${timestamp}-log.txt
   else
-    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${cp}:${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline -b $benchfile "${prparams[@]}" |& tee -a ./logs/${prefix}-${timestamp}-log.txt
+    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${cp}:${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' uk.ac.gate.gatetool.runpipeline.RunPipeline -b $benchfile "${prparams[@]}" |& tee -a ./logs/${prefix}-${timestamp}-log.txt
   fi
   echo log file is ./logs/${prefix}-${timestamp}-log.txt
   echo benchmark file is  $benchfile 
 else 
   if [[ "$cp" == "" ]] 
   then
-    ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline "${prparams[@]}"
+    ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' uk.ac.gate.gatetool.runpipeline.RunPipeline "${prparams[@]}"
   else
-    ${SCALA_HOME}/bin/scala -cp ${cp}:${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline "${prparams[@]}"
+    ${SCALA_HOME}/bin/scala -cp ${cp}:${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' uk.ac.gate.gatetool.runpipeline.RunPipeline "${prparams[@]}"
   fi
 fi  
 

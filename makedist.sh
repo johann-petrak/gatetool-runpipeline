@@ -3,7 +3,7 @@
 name=gatetool-runpipeline
 tmpdir=/tmp
 curdir=`pwd -P`
-version=`perl -n -e 'if (/VERSION="([^"]+)"/) { print $1;}' < $curdir/creole.xml`
+version=1.1
 destdir=$tmpdir/${name}$$
 curbranch=`git branch | grep '\*' | cut -c 3-`
 echo Making a release zip for plugin $name, version $version from branch $curbranch

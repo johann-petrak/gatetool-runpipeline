@@ -18,8 +18,8 @@
     <maven.compiler.source>1.6</maven.compiler.source>
     <maven.compiler.target>1.6</maven.compiler.target>
     <encoding>UTF-8</encoding>
-    <scala.version>2.11.5</scala.version>
-    <scala.compat.version>2.11</scala.compat.version>
+    <scala.version>2.12.1</scala.version>
+    <scala.compat.version>2.12</scala.compat.version>
   </properties>
 
   <dependencies>
@@ -36,6 +36,7 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+    <!--
     <dependency>
       <groupId>org.specs2</groupId>
       <artifactId>specs2-core_${scala.compat.version}</artifactId>
@@ -48,11 +49,11 @@
       <version>2.2.4</version>
       <scope>test</scope>
     </dependency>
-<!-- https://mvnrepository.com/artifact/org.rogach/scallop_2.11 -->
+    -->
 <dependency>
 	    <groupId>org.rogach</groupId>
-	        <artifactId>scallop_2.11</artifactId>
-		    <version>0.9.5</version>
+	        <artifactId>scallop_2.12</artifactId>
+		    <version>3.1.2</version>
 	    </dependency>
 	    <!-- https://mvnrepository.com/artifact/uk.ac.gate/gate-core -->
 	    <dependency>

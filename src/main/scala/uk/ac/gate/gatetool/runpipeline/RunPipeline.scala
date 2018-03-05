@@ -14,7 +14,7 @@ import java.util._
 import java.io.File
 import org.rogach.scallop._
 import org.rogach.scallop.exceptions.Help
-import scala.collection.JavaConverters._
+import scala.collection.JavaConversions._
 import scala.util.control._
 
 // NOTE: this program sets the following java properties before invoking the 
@@ -81,7 +81,7 @@ object RunPipeline {
       override protected def onError(e: Throwable) = onError(e, builder)
     }
     val conf = new Conf(args,onError)
-    
+    conf.verify() 
 
     if(conf.pipeline.isEmpty) {
       System.err.println("Pipeline and input directory are required")
@@ -487,8 +487,8 @@ object RunPipeline {
       Gate.getCreoleRegister().getAllInstances("gate.ProcessingResource"));
     listOfListOfResources.add(
       Gate.getCreoleRegister().getAllInstances("gate.Controller"));
-    listOfListOfResources.asScala.foreach { resources => 
-      resources.asScala.foreach { aResource => 
+    listOfListOfResources.foreach { resources => 
+      resources.foreach { aResource => 
         try { 
           if(debug) { System.err.println("Trying to remove resource "+aResource.getName()); }
           Factory.deleteResource(aResource);

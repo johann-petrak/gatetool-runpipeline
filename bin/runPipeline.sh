@@ -22,6 +22,8 @@ SCRIPTDIR=`dirname "$PRG"`
 SCRIPTDIR=`cd "$SCRIPTDIR"; pwd -P`
 ROOTDIR=`cd "$SCRIPTDIR/.."; pwd -P`
 
+POM="${ROOTDIR}/pom.xml" 
+
 ## Before passing all the parameters on to the command, check if there are any
 ## which need to go before the class name.
 ## For now we check for parameters -X* -D*
@@ -56,16 +58,17 @@ do
   fi
   shift
 done
-echo DEBUG got vmparms $vmparms AND prparms $prparms
+
 if [ "${JAVA_OPTS}" != "" ]
 then
+  echo 'WARNING setting MAVEN_OPTS from JAVA_OPTS:' $JAVA_OPTS
   vmparams=( "${JAVA_OPTS}" "${vmparams[@]}" )
 fi
 
 export MAVEN_OPTS="${vmparams[@]}"
 
-echo DEBUG final MAVEN_OPTS is $JAVA_OPTS
-echo DEBUG final vmparms is $vmparms
+echo INFO final MAVEN_OPTS is $MAVEN_OPTS
+# echo DEBUG final vmparms is "${vmparams[@]}"
 
 ## for now use environment variable RUNPIPELINE_LOG_PREFIX 
 ## to store the log and benchmark files with some other prefix than "run-"
@@ -74,20 +77,15 @@ timestamp=`date +%Y%m%d%H%M%S`
 if [[ $havelogs == 1 ]]
 then
   benchfile=./logs/${prefix}-${timestamp}-benchmark.txt
-  echo log file is ./logs/${prefix}-${timestamp}-log.txt
-  echo benchmark file is  $benchfile 
-  /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt mvn exec:java  uk.ac.gate.gatetool.runpipeline.RunPipeline -b $benchfile "${prparams[@]}" |& tee -a ./logs/${prefix}-${timestamp}-log.txt
-  else
-    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${cp}:${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' uk.ac.gate.gatetool.runpipeline.RunPipeline -b $benchfile "${prparams[@]}" |& tee -a ./logs/${prefix}-${timestamp}-log.txt
-  fi
-  echo log file is ./logs/${prefix}-${timestamp}-log.txt
-  echo benchmark file is  $benchfile 
+  # echo log file is ./logs/${prefix}-${timestamp}-log.txt
+  # echo benchmark file is  $benchfile 
+  prparams=(  "-b $benchfile" "${prparams[@]}" )  
+  echo INFO final parms are '>'${prparams[@]}'<'
+  /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt mvn -f $POM -q exec:java -Dexec.mainClass=uk.ac.gate.gatetool.runpipeline.RunPipeline \"-Dexec.args=${prparams[@]}\" |& tee -a ./logs/${prefix}-${timestamp}-log.txt
+  echo INFO log file is ./logs/${prefix}-${timestamp}-log.txt
+  echo INFO benchmark file is  $benchfile 
 else 
-  if [[ "$cp" == "" ]] 
-  then
-    ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' uk.ac.gate.gatetool.runpipeline.RunPipeline "${prparams[@]}"
-  else
-    ${SCALA_HOME}/bin/scala -cp ${cp}:${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' uk.ac.gate.gatetool.runpipeline.RunPipeline "${prparams[@]}"
-  fi
+  echo INFO final parms are ${prparams[@]}
+  mvn -f $POM -q exec:java -Dexec.mainClass=uk.ac.gate.gatetool.runpipeline.RunPipeline \"-Dexec.args=${prparams[@]}\" 
 fi  
 

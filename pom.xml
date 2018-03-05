@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>uk.ac.gate</groupId>
@@ -13,7 +14,6 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -21,29 +21,25 @@
     <scala.version>2.12.1</scala.version>
     <scala.compat.version>2.12</scala.compat.version>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
       <version>${scala.version}</version>
     </dependency>
-
-<dependency>
-	    <groupId>org.rogach</groupId>
-	        <artifactId>scallop_2.12</artifactId>
-		    <version>3.1.2</version>
-	    </dependency>
-	    <!-- https://mvnrepository.com/artifact/uk.ac.gate/gate-core -->
-	    <dependency>
-		        <groupId>uk.ac.gate</groupId>
-			    <artifactId>gate-core</artifactId>
-			         <version>8.4.1</version> 
-        <!-- <version>8.5-SNAPSHOT</version> -->
-			</dependency>
-
+    <dependency>
+      <groupId>org.rogach</groupId>
+      <artifactId>scallop_2.12</artifactId>
+      <version>3.1.2</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/uk.ac.gate/gate-core -->
+    <dependency>
+      <groupId>uk.ac.gate</groupId>
+      <artifactId>gate-core</artifactId>
+      <version>8.4.1</version>
+      <!-- <version>8.5-SNAPSHOT</version> -->
+    </dependency>
   </dependencies>
-
   <build>
     <sourceDirectory>src/main/scala</sourceDirectory>
     <testSourceDirectory>src/test/scala</testSourceDirectory>
@@ -61,7 +57,7 @@
             </goals>
             <configuration>
               <args>
-		      <!-- <arg>-make:transitive</arg> -->
+                <!-- <arg>-make:transitive</arg> -->
                 <arg>-dependencyfile</arg>
                 <arg>${project.build.directory}/.scala_dependencies</arg>
               </args>

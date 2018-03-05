@@ -7,7 +7,10 @@
   <!-- if GATE_HOME is set it takes preference over ../.. but
        something set in build.properties will still be preferred -->
   <property name="gate.home" location="${env.GATE_HOME}" />
+  <!-- this version uses its own Scala libraries
   <property name="scala.home" location="${env.SCALA_HOME}" />
+  -->
+  <property name="scala.home" location="./scala" />
 
   <!-- location of GATE lib directory - should be inferred from gate.home -->
   <property name="gate.lib" location="${gate.home}/lib" />
@@ -44,19 +47,7 @@
     </fileset>
     <fileset dir="lib" includes="**/*.jar" />
   </path>
-  <!-- in case we want to add dual java/scala compilation later 
-  <path id="javacompile.classpath">
-    <pathelement location="${scala.home}/lib/scala-compiler.jar"/>
-    <pathelement location="${scala.home}/lib/scala-library.jar"/>
-    <pathelement location="${gate.jar}" />
-    <pathelement location="${classes.dir}" />
-    <fileset dir="${gate.lib}">
-      <include name="**/*.jar" />
-      <include name="**/*.zip" />
-    </fileset>
-    <fileset dir="${lib.dir}" includes="**/*.jar" />
-  </path>
-  -->
+
   <target name="taskdefs"> 
     <taskdef resource="scala/tools/ant/antlib.xml">
       <classpath>
@@ -70,15 +61,14 @@
  
 
   <target name="scala-compile" depends="taskdefs,prepare">
-    <fsc srcdir="${src.dir}" 
+    <scalac srcdir="${src.dir}" 
             destdir="${classes.dir}" 
             classpathref="scalacompile.classpath"
-            deprecation="true"
-            addparams="-feature"
-            force="changed">
+            deprecation="false"
+            force="false">
       <include name="**/*.scala"/>
       <!-- <include name="**/*.java"/> -->
-    </fsc>
+    </scalac>
   </target>
 
  
@@ -87,20 +77,6 @@
     <mkdir dir="${classes.dir}" />
   </target>
 
-  <!-- compile the java sources -->
-  <!--
-  <target name="java-only-compile" depends="prepare" >
-    <javac classpathref="javacompile.classpath"
-           srcdir="${src.dir}"
-           destdir="${classes.dir}"
-           debug="true"
-           debuglevel="lines,source"
-           source="1.5" />
-  </target>
-
-  <target name="java-compile" depends="scala-compile,java-only-compile"/>
-  -->
-  
   <!-- copy resources (anything non-.java) from src to classes -->
   <target name="copy.resources" depends="prepare">
     <copy todir="${classes.dir}">

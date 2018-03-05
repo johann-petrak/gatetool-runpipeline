@@ -5,12 +5,7 @@ then
   echo Environment variable GATE_HOME not set
   exit 1
 fi
-if [ "x${SCALA_HOME}" == "x" ]
-then
-  echo Environment variable SCALA_HOME not set
-  echo Scala must be installed and the environment variable SCALA_HOME set to the installation directory
-  exit 1
-fi
+
 havelogs=1
 if [[ ! -d logs ]]; then
   echo "The current directory does not contain a logs subdirectory. no logs saved" 
@@ -32,6 +27,7 @@ done
 SCRIPTDIR=`dirname "$PRG"`
 SCRIPTDIR=`cd "$SCRIPTDIR"; pwd -P`
 ROOTDIR=`cd "$SCRIPTDIR/.."; pwd -P`
+SCALA_HOME="$ROOTDIR/scala" 
 
 ## Before passing all the parameters on to the command, check if there are any
 ## which need to go before the program name.

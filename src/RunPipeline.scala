@@ -79,7 +79,7 @@ object RunPipeline {
       override protected def onError(e: Throwable) = onError(e, builder)
     }
     val conf = new Conf(args,onError)
-    
+    conf.verify() 
 
     if(conf.pipeline.isEmpty) {
       System.err.println("Pipeline and input directory are required")

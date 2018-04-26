@@ -1,5 +1,18 @@
 #!/bin/bash
 
+## This tries the following strategies to run the RunPipeline class
+## - if there is a GATE_HOME environment variable, we assume the GATE installation there has 
+##   the usual ./bin/gate.jar and ./lib/*jar layout and use the jars for the GATE dependencies there.
+##   In addition we use the scala and lib dirs from in here for those dependencies.
+## - TODO: use the Maven cache 
+
+JAR=gatetool-runpipeline-2.0-SNAPSHOT.jar
+if [ "x${GATE_HOME}" == "x" ]
+then
+  echo Environment variable GATE_HOME not set
+  exit 1
+fi
+
 havelogs=1
 if [[ ! -d logs ]]; then
   echo "The current directory does not contain a logs subdirectory. no logs saved" 
@@ -21,13 +34,18 @@ done
 SCRIPTDIR=`dirname "$PRG"`
 SCRIPTDIR=`cd "$SCRIPTDIR"; pwd -P`
 ROOTDIR=`cd "$SCRIPTDIR/.."; pwd -P`
+SCALA_HOME="$ROOTDIR/scala" 
 
-POM="${ROOTDIR}/pom.xml" 
+JAR=$ROOTDIR/target/$JAR
+if [[ ! -f $JAR ]]
+then
+  echo $JAR 'does not exist, did you prepare by using mvn package?'
+  exit 1
+fi
 
 ## Before passing all the parameters on to the command, check if there are any
-## which need to go before the class name.
-## For now we check for parameters -X* -D*
-## TODO: is there a way to add additional jars to the classpath on the fly
+## which need to go before the program name.
+## For now we check for parameters -X* -D* and -cp
 vmparams=()
 prparams=()
 while test "$1" != "";
@@ -45,8 +63,6 @@ do
     else
       if [[ "$full" == "-cp" ]] 
       then 
-      	echo 'option -cp not supported for now!'
-      	exit 1
         shift
         cp="$1"
         ## echo FOUND cp, set to $cp
@@ -58,17 +74,16 @@ do
   fi
   shift
 done
-
+echo DEBUG got vmparms $vmparms AND prparms $prparms
 if [ "${JAVA_OPTS}" != "" ]
 then
-  echo 'WARNING setting MAVEN_OPTS from JAVA_OPTS:' $JAVA_OPTS
   vmparams=( "${JAVA_OPTS}" "${vmparams[@]}" )
 fi
 
-export MAVEN_OPTS="${vmparams[@]}"
+export JAVA_OPTS="${vmparams[@]}"
 
-echo INFO final MAVEN_OPTS is $MAVEN_OPTS
-# echo DEBUG final vmparms is "${vmparams[@]}"
+echo DEBUG final JAVA_OPTS is $JAVA_OPTS
+echo DEBUG final vmparms is $vmparms
 
 ## for now use environment variable RUNPIPELINE_LOG_PREFIX 
 ## to store the log and benchmark files with some other prefix than "run-"
@@ -77,15 +92,22 @@ timestamp=`date +%Y%m%d%H%M%S`
 if [[ $havelogs == 1 ]]
 then
   benchfile=./logs/${prefix}-${timestamp}-benchmark.txt
-  # echo log file is ./logs/${prefix}-${timestamp}-log.txt
-  # echo benchmark file is  $benchfile 
-  prparams=(  "-b $benchfile" "${prparams[@]}" )  
-  echo INFO final parms are '>'${prparams[@]}'<'
-  /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt mvn -f $POM -q exec:java -Dexec.mainClass=uk.ac.gate.gatetool.runpipeline.RunPipeline \"-Dexec.args=${prparams[@]}\" |& tee -a ./logs/${prefix}-${timestamp}-log.txt
-  echo INFO log file is ./logs/${prefix}-${timestamp}-log.txt
-  echo INFO benchmark file is  $benchfile 
+  echo log file is ./logs/${prefix}-${timestamp}-log.txt
+  echo benchmark file is  $benchfile 
+  if [[ "$cp" == "" ]] 
+  then
+    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':$JAR:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline -b $benchfile "${prparams[@]}" |& tee -a ./logs/${prefix}-${timestamp}-log.txt
+  else
+    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${cp}:${ROOTDIR}/lib/'*':$JAR:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline -b $benchfile "${prparams[@]}" |& tee -a ./logs/${prefix}-${timestamp}-log.txt
+  fi
+  echo log file is ./logs/${prefix}-${timestamp}-log.txt
+  echo benchmark file is  $benchfile 
 else 
-  echo INFO final parms are ${prparams[@]}
-  mvn -f $POM -q exec:java -Dexec.mainClass=uk.ac.gate.gatetool.runpipeline.RunPipeline \"-Dexec.args=${prparams[@]}\" 
+  if [[ "$cp" == "" ]] 
+  then
+    ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline "${prparams[@]}"
+  else
+    ${SCALA_HOME}/bin/scala -cp ${cp}:${ROOTDIR}/lib/'*':${ROOTDIR}/gatetool-runpipeline.jar:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' RunPipeline "${prparams[@]}"
+  fi
 fi  
 

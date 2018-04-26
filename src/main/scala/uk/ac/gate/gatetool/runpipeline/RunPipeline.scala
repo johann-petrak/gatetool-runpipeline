@@ -1,5 +1,6 @@
 
 import gate._
+import gate.creole._
 import gate.util.ExtensionFileFilter
 import gate.util.persistence.PersistenceManager
 import gate.creole.AbstractController
@@ -189,17 +190,14 @@ object RunPipeline {
     System.out.println("Starting up GATE ....");
     Gate.setGateHome(new File(gatehome))
     
-    Gate.setNetConnected(false);
-    Gate.setLocalWebServer(false);
-
-    Gate.runInSandbox(true)
     Gate.init()
     if(!nobench) {
       Benchmark.setBenchmarkingEnabled(true)
     }
     System.out.println("GATE startup completed.");
 
-    gate.Utils.loadPlugin("Format_FastInfoset")
+    // gate.Utils.loadPlugin("Format_FastInfoset")
+    Gate.getCreoleRegister().registerPlugin(new Plugin.Maven("uk.ac.gate.plugins","format-fastinfoset","8.5-SNAPSHOT"));
     // now we have to do it like this, but we should change this again as soon
     // as an easier way, based on mime types is added to GATE.
     var docExporter:DocumentExporter = null

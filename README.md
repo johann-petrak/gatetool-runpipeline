@@ -11,15 +11,15 @@ on the computer. Everything else is handled by Maven.
 The previous version of this toll was based on ant and included Scala and the library
 necessary for compiling.
 
-Requirements for compiling and running:
+## Requirements
+
 * Linux or a linux-like OS that supports bash scripting
 * Java version 8
 * Maven
 
-Note: compiling is done automatically and transparently by Maven when the
-`./bin/runPipeline.sh` command is first executed. In order to compile, Maven
-may need to download a number of JAR files, so the first run can take a longer
-time to start.
+## Compiling
+
+Before the first use compile by running the command `mvn package`
 
 ## Usage
 

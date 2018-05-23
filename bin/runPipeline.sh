@@ -13,6 +13,21 @@ then
   exit 1
 fi
 
+if [[ -f "${GATE_HOME}/gate.classpath" ]]
+then
+  gatecp=`cat "${GATE_HOME}/gate.classpath"`
+else
+  if [[ -d "${GATE_HOME}/lib" ]]
+  then
+    gatecp="${GATE_HOME}/lib/"'*'
+  else
+    echo Could not find $GATE_HOME/gate.classpath nor $GATE_HOME/lib
+    exit 1
+  fi
+fi
+
+#echo DEBUG gatecp=$gatecp
+
 havelogs=1
 if [[ ! -d logs ]]; then
   havelogs=0
@@ -85,6 +100,7 @@ export JAVA_OPTS="${vmparams[@]}"
 # echo DEBUG final vmparms is $vmparms
 # echo DEBUG GATE_HOME is $GATE_HOME
 
+
 ## for now use environment variable RUNPIPELINE_LOG_PREFIX 
 ## to store the log and benchmark files with some other prefix than "run-"
 prefix="${RUNPIPELINE_LOG_PREFIX:-run}"
@@ -96,18 +112,18 @@ then
   echo benchmark file is  $benchfile 
   if [[ "$cp" == "" ]] 
   then
-    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':$JAR:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' uk.ac.gate.gatetool.runpipeline.RunPipeline -b $benchfile "${prparams[@]}" 2>&1 | tee -a ./logs/${prefix}-${timestamp}-log.txt
+    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':$JAR:${GATE_HOME}/bin/gate.jar:$gatecp uk.ac.gate.gatetool.runpipeline.RunPipeline -b $benchfile "${prparams[@]}" 2>&1 | tee -a ./logs/${prefix}-${timestamp}-log.txt
   else
-    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${cp}:${ROOTDIR}/lib/'*':$JAR:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' uk.ac.gate.gatetool.runpipeline.RunPipeline -b $benchfile "${prparams[@]}" 2>&1 | tee -a ./logs/${prefix}-${timestamp}-log.txt
+    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${cp}:${ROOTDIR}/lib/'*':$JAR:${GATE_HOME}/bin/gate.jar:$gatecp uk.ac.gate.gatetool.runpipeline.RunPipeline -b $benchfile "${prparams[@]}" 2>&1 | tee -a ./logs/${prefix}-${timestamp}-log.txt
   fi
   echo log file is ./logs/${prefix}-${timestamp}-log.txt
   echo benchmark file is  $benchfile 
 else 
   if [[ "$cp" == "" ]] 
   then
-    ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':$JAR:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' uk.ac.gate.gatetool.runpipeline.RunPipeline "${prparams[@]}"
+    ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':$JAR:${GATE_HOME}/bin/gate.jar:$gatecp uk.ac.gate.gatetool.runpipeline.RunPipeline "${prparams[@]}"
   else
-    ${SCALA_HOME}/bin/scala -cp ${cp}:${ROOTDIR}/lib/'*':$JAR:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' uk.ac.gate.gatetool.runpipeline.RunPipeline "${prparams[@]}"
+    ${SCALA_HOME}/bin/scala -cp ${cp}:${ROOTDIR}/lib/'*':$JAR:${GATE_HOME}/bin/gate.jar:$gatecp uk.ac.gate.gatetool.runpipeline.RunPipeline "${prparams[@]}"
   fi
 fi  
 

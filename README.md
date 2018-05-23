@@ -13,13 +13,21 @@ necessary for compiling.
 
 ## Requirements
 
-* Linux or a linux-like OS that supports bash scripting
+* GATE 8.5 (this does NOT work with GATE 8.4.x or earlier any more!)
+* Linux, MacOS or a linux-like OS that supports bash scripting
 * Java version 8
 * Maven
 
+Make sure that GATE is installed and that the environment variable `GATE_HOME` points to
+the `distro` subdirectory of the GATE installation. If you installed GATE by cloning the 
+git `gate-core` directory, make sure the following was done:
+* in gate-core: `mvn install`
+* in gate-core/distro: `mvn compile`
+
 ## Compiling
 
-Before the first use compile by running the command `mvn package`
+Before the first use compile by running the command 
+* `mvn package`
 
 ## Usage
 

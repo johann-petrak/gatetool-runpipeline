@@ -26,7 +26,7 @@ else
   fi
 fi
 
-#echo DEBUG gatecp=$gatecp
+# echo DEBUG gatecp=$gatecp
 
 havelogs=1
 if [[ ! -d logs ]]; then

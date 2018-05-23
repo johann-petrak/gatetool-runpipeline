@@ -96,9 +96,9 @@ then
   echo benchmark file is  $benchfile 
   if [[ "$cp" == "" ]] 
   then
-    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':$JAR:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' uk.ac.gate.gatetool.runpipeline.RunPipeline -b $benchfile "${prparams[@]}" |& tee -a ./logs/${prefix}-${timestamp}-log.txt
+    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${ROOTDIR}/lib/'*':$JAR:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' uk.ac.gate.gatetool.runpipeline.RunPipeline -b $benchfile "${prparams[@]}" 2>&1 | tee -a ./logs/${prefix}-${timestamp}-log.txt
   else
-    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${cp}:${ROOTDIR}/lib/'*':$JAR:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' uk.ac.gate.gatetool.runpipeline.RunPipeline -b $benchfile "${prparams[@]}" |& tee -a ./logs/${prefix}-${timestamp}-log.txt
+    /usr/bin/time -o ./logs/${prefix}-${timestamp}-time.txt ${SCALA_HOME}/bin/scala -cp ${cp}:${ROOTDIR}/lib/'*':$JAR:${GATE_HOME}/bin/gate.jar:${GATE_HOME}/lib/'*' uk.ac.gate.gatetool.runpipeline.RunPipeline -b $benchfile "${prparams[@]}" 2>&1 | tee -a ./logs/${prefix}-${timestamp}-log.txt
   fi
   echo log file is ./logs/${prefix}-${timestamp}-log.txt
   echo benchmark file is  $benchfile 

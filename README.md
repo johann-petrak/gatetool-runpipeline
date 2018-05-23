@@ -19,10 +19,17 @@ necessary for compiling.
 * Maven
 
 Make sure that GATE is installed and that the environment variable `GATE_HOME` points to
-the `distro` subdirectory of the GATE installation. If you installed GATE by cloning the 
+the directory that contains the `./bin` subdirectory. 
+
+If you have installed GATE by cloning the 
 git `gate-core` directory, make sure the following was done:
 * in gate-core: `mvn install`
 * in gate-core/distro: `mvn compile`
+* `GATE_HOME` is set to the full path of the `distro` directory
+
+If you have installed GATE by downloading and unpacking the zip file of
+a pre-built distribution, make sure:
+* `GATE_HOME` is set to the full path of the directory that was created by unpacking the zip file
 
 ## Compiling
 

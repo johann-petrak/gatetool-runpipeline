@@ -76,7 +76,7 @@ object RunPipeline {
       val skiponerrors = opt[Boolean]("skiponerrors",'s',descr="If processing the document throws an exception do NOT save it",required=false,default=Some(false))
       val quiet = opt[Boolean]("quiet",'q',descr="Do not show messages per processed document",required=false,default=Some(false))
       val veryquiet = opt[Boolean]("veryquiet",'Q',descr="Do not show any messages except errors",required=false,default=Some(false))
-      val mimetype = opt[String]("mimetype",'M',descr="Mimetype to use for reading the documents")
+      val mimetype = opt[String]("mimetype",'M',descr="Mimetype to use for reading the documents", required=false, default=Some(""))
       val pipeline = trailArg[String](required=true,descr="The pipeline file to use")
       val indir = trailArg[String](required=true,descr="Input directory")
       val outdir = trailArg[String](required=false,descr="Output directory")
@@ -121,7 +121,7 @@ object RunPipeline {
     
     val debug = conf.debug()
     val nobench = !conf.dobench()
-    val mimetype = conf.mimetype()
+    var mimetype = conf.mimetype()
     
     var quiet = conf.quiet()
     var veryquiet = conf.veryquiet()
@@ -323,7 +323,7 @@ object RunPipeline {
       fm.put(Document.DOCUMENT_MARKUP_AWARE_PARAMETER_NAME, true.asInstanceOf[Object])
       fm.put("sourceUrl", docFile.toURI().toURL())
       fm.put(Document.DOCUMENT_ENCODING_PARAMETER_NAME, "UTF-8")
-      if(mimetype != None) {
+      if(mimetype != "") {
         fm.put(Document.DOCUMENT_MIME_TYPE_PARAMETER_NAME, mimetype)
       }
       val doc = gate.Factory.createResource("gate.corpora.DocumentImpl", fm).asInstanceOf[Document]

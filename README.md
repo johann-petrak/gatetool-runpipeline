@@ -5,11 +5,6 @@ and save the result either back to the original files, or save them in a new dir
 do not save anything at all and just run the pipeline for some side-effect (e.g. training a
 machine learning model, calculating corpus statistics, ...).
 
-This version of the tool is based on Maven and requires Maven and Java 8 SDK to be installed
-on the computer. Everything else is handled by Maven.
-
-The previous version of this toll was based on ant and included Scala and the library
-necessary for compiling.
 
 ## Requirements
 
